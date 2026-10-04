@@ -69,16 +69,3 @@ LEFT JOIN shop_product p ON p.category_id = c.id GROUP BY c.id, c.name;
 ```
 Khác biệt: ORM ép kiểu AVG sang Decimal, SQLite trả float.
 
-## Tính năng (điền dần từ tuần 1)
-### [Tên tính năng]
-- File liên quan: urls.py → views.py → models.py → templates/...
-- Luồng chạy: người dùng bấm ... → ... → ...
-- Bảng dữ liệu: ...
-
-## Lỗi đã gặp
-| Lỗi | Nguyên nhân | Cách sửa |
-| --- | --- | --- |
-|  |  |  |
-
-## Câu hỏi bảo vệ tự trả lời
-- ...
