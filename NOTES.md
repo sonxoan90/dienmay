@@ -22,8 +22,18 @@
 - Hiểu được: lệnh tự viết phải nằm trong `<app>/management/commands/` và có `__init__.py` thì Django mới nhận
 - Còn chưa rõ: ...
 
+### Tuần 2 – Admin
+- Đã làm: đăng ký model vào admin (ảnh thu nhỏ, sửa nhanh giá/tồn kho, khóa/mở user), trang Đơn hàng có inline sản phẩm/thanh toán/lịch sử, 4 action đổi trạng thái, nhóm "Nhân viên bán hàng" (tài khoản `nhanvien1`)
+- Hiểu được: trạng thái đơn chỉ đổi qua `change_status` để luôn kiểm tra luồng, hoàn tồn kho khi hủy và ghi lịch sử trong một giao dịch
+- Còn chưa rõ: ...
+
+### Tuần 3 – Giao diện khách, đăng ký/đăng nhập
+- Đã làm: `base.html` (Bootstrap 5), trang chủ, danh sách (lọc, sắp xếp, phân trang 12), tìm kiếm, chi tiết, đăng ký/đăng nhập/đăng xuất, trang Tài khoản
+- Hiểu được: mọi bộ lọc là tham số trên URL; form đăng xuất phải là POST
+- Còn chưa rõ: ...
+
 ## Vai trò các bảng
-| App | Bảng | Vai trò (tự viết) | Quan hệ chính |
+| App | Bảng | Vai trò | Quan hệ chính |
 | --- | --- | --- | --- |
 | shop | Category | Nhóm hàng như Tivi, Tủ lạnh; dùng để lọc và hiển thị menu | 1 danh mục – n sản phẩm |
 | shop | Brand | Hãng sản xuất như Samsung, LG; dùng để lọc theo hãng | 1 nhãn hàng – n sản phẩm |
@@ -69,3 +79,17 @@ LEFT JOIN shop_product p ON p.category_id = c.id GROUP BY c.id, c.name;
 ```
 Khác biệt: ORM ép kiểu AVG sang Decimal, SQLite trả float.
 
+## Luồng Tuần 2: admin bấm Hủy đơn
+Admin chọn đơn → action `huy_don` (orders/admin.py) → `_bulk_change` → `change_status` (orders/services.py): khóa dòng đơn (`select_for_update`), kiểm tra `ALLOWED`, cộng lại `stock` bằng `F()`, lưu đơn, ghi `OrderStatusHistory`.
+Bảng: orders_order, orders_orderitem, shop_product, orders_orderstatushistory. Đơn sai luồng bị báo lỗi đỏ riêng từng đơn.
+
+## Luồng Tuần 3: tìm kiếm
+Gõ `samsung` ở ô tìm kiếm trong `base.html` → `/san-pham/?q=samsung` → `config/urls.py` → `shop/urls.py` → `product_list` → ORM `Q(name__icontains) | Q(brand__name__icontains)` + `Paginator` → `product_list.html`.
+Bảng: shop_product, shop_brand. Hạn chế: gõ không dấu ("tu lanh") không ra "Tủ lạnh" (hướng cải tiến).
+
+## Đăng ký / đăng nhập
+`/dang-ky/` → view `signup` → `SignUpForm` (kiểm tra SĐT 10 số) → tạo User + Profile → `login()`. Mật khẩu lưu băm `pbkdf2_sha256$...`. `/tai-khoan/` dùng `@login_required` + 2 form (User, Profile).
+
+## Chạy test
+User Postgres không có quyền tạo DB test, nên chạy test với settings SQLite tạm (`DATABASES` = sqlite `:memory:`): `python manage.py test --settings=<module>`.
+Các test: `orders/tests.py` (đổi trạng thái, hoàn tồn kho), `shop/tests.py` (trang khách, lọc, đăng ký, đăng nhập).

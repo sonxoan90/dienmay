@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,13 +62,14 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],          # 1) Django tìm template trong thư mục này
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'shop.context_processors.menu',      # 2) biến dùng chung cho mọi trang
             ],
         },
     },
@@ -113,9 +115,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'vi'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 USE_I18N = True
 
@@ -136,3 +138,9 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+# cuối file
+LOGIN_URL = 'login'              # chưa đăng nhập mà vào trang cần đăng nhập → đưa về đây
+LOGIN_REDIRECT_URL = 'home'      # đăng nhập xong → về trang chủ
+LOGOUT_REDIRECT_URL = 'home'     # đăng xuất xong → về trang chủ

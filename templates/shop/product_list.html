@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Sản phẩm – Điện Máy Online{% endblock %}
+{% block content %}
+<div class="row">
+  <aside class="col-lg-3 mb-4">
+    <form method="get" class="card card-body">
+      {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+      <label class="form-label fw-semibold">Danh mục</label>
+      <select name="category" class="form-select mb-3">
+        <option value="">Tất cả</option>
+        {% for c in categories %}
+          <option value="{{ c.slug }}" {% if request.GET.category == c.slug %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+      <label class="form-label fw-semibold">Nhãn hàng</label>
+      <select name="brand" class="form-select mb-3">
+        <option value="">Tất cả</option>
+        {% for b in brands %}
+          <option value="{{ b.slug }}" {% if request.GET.brand == b.slug %}selected{% endif %}>{{ b.name }}</option>
+        {% endfor %}
+      </select>
+      <label class="form-label fw-semibold">Khoảng giá (đ)</label>
+      <div class="d-flex gap-2 mb-3">
+        <input type="number" name="min_price" class="form-control" placeholder="Từ" value="{{ request.GET.min_price }}">
+        <input type="number" name="max_price" class="form-control" placeholder="Đến" value="{{ request.GET.max_price }}">
+      </div>
+      <label class="form-label fw-semibold">Sắp xếp</label>
+      <select name="sort" class="form-select mb-3">
+        <option value="new" {% if sort == 'new' %}selected{% endif %}>Mới nhất</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Giá tăng dần</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Giá giảm dần</option>
+      </select>
+      <button class="btn btn-primary" type="submit">Lọc</button>
+      <a class="btn btn-link" href="{% url 'product_list' %}">Xoá bộ lọc</a>
+    </form>
+  </aside>
+
+  <section class="col-lg-9">
+    <p class="text-muted">
+      {% if q %}Kết quả cho "<b>{{ q }}</b>": {% endif %}{{ page.paginator.count }} sản phẩm
+    </p>
+    <div class="row g-3">
+      {% for p in page %}{% include 'shop/_product_card.html' %}{% empty %}<p>Không tìm thấy sản phẩm phù hợp.</p>{% endfor %}
+    </div>
+
+    {% if page.has_other_pages %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page.has_previous %}
+          <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.previous_page_number }}">«</a></li>
+        {% endif %}
+        {% for n in page.paginator.page_range %}
+          <li class="page-item {% if n == page.number %}active{% endif %}">
+            <a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ n }}">{{ n }}</a></li>
+        {% endfor %}
+        {% if page.has_next %}
+          <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.next_page_number }}">»</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

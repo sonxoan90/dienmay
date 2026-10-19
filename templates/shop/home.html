@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-5 mb-4 bg-primary-subtle rounded-3">
+  <h1 class="fw-bold">Điện máy chính hãng, giá tốt</h1>
+  <p class="lead">Tivi, tủ lạnh, máy giặt, điều hoà – giao nhanh, trả góp 0%.</p>
+  <a class="btn btn-primary btn-lg" href="{% url 'product_list' %}">Xem tất cả sản phẩm</a>
+</div>
+
+<h4 class="mb-3">Sản phẩm mới</h4>
+<div class="row g-3 mb-5">
+  {% for p in featured %}{% include 'shop/_product_card.html' %}{% empty %}<p>Chưa có sản phẩm.</p>{% endfor %}
+</div>
+
+{% for category, items in sections %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="m-0">{{ category.name }}</h4>
+    <a href="{% url 'product_list' %}?category={{ category.slug }}">Xem thêm →</a>
+  </div>
+  <div class="row g-3 mb-5">
+    {% for p in items %}{% include 'shop/_product_card.html' %}{% endfor %}
+  </div>
+{% endfor %}
+{% endblock %}

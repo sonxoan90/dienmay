@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}{{ product.name }} – Điện Máy Online{% endblock %}
+{% block content %}
+<nav class="small mb-3"><a href="{% url 'home' %}">Trang chủ</a> /
+  <a href="{% url 'product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a> / {{ product.name }}</nav>
+<div class="row g-4">
+  <div class="col-md-5">
+    {% if product.image %}<img src="{{ product.image.url }}" class="img-fluid border rounded p-3" alt="{{ product.name }}">
+    {% else %}<div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height:320px">Chưa có ảnh</div>{% endif %}
+  </div>
+  <div class="col-md-7">
+    <div class="text-muted">{{ product.brand.name }}</div>
+    <h2>{{ product.name }}</h2>
+    <p class="fs-3 fw-bold text-danger mb-1">{{ product.final_price|vnd }}</p>
+    {% if product.sale_price %}<p class="text-muted"><del>{{ product.price|vnd }}</del></p>{% endif %}
+    <p>{% if product.stock > 0 %}<span class="badge bg-success">Còn {{ product.stock }} sản phẩm</span>
+       {% else %}<span class="badge bg-secondary">Hết hàng</span>{% endif %}</p>
+    <div class="d-flex gap-2 mb-4">
+      <button class="btn btn-outline-primary" {% if product.stock == 0 %}disabled{% endif %}>Thêm vào giỏ</button>
+      <button class="btn btn-danger" {% if product.stock == 0 %}disabled{% endif %}>Mua ngay</button>
+    </div>
+    <h5>Thông số</h5>
+    <div class="border rounded p-3" style="white-space: pre-line">{{ product.specs|default:"Đang cập nhật." }}</div>
+  </div>
+</div>
+{% if related %}
+<h4 class="mt-5 mb-3">Sản phẩm cùng danh mục</h4>
+<div class="row g-3">{% for p in related %}{% include 'shop/_product_card.html' %}{% endfor %}</div>
+{% endif %}
+{% endblock %}
