@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}Đặt hàng thành công{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+  <h2 class="text-success">Đặt hàng thành công!</h2>
+  <p class="lead">Mã đơn của bạn: <b>{{ order.code }}</b></p>
+  <p>Tổng tiền: <b>{{ order.total_amount|vnd }}</b> · {{ order.get_payment_method_display }}</p>
+  <p class="text-muted">Hãy lưu mã đơn và số điện thoại để tra cứu trạng thái.</p>
+  <a class="btn btn-primary" href="{% url 'order_detail' order.code %}">Xem đơn hàng</a>
+  <a class="btn btn-link" href="{% url 'home' %}">Về trang chủ</a>
+</div>
+{% endblock %}

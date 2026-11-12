@@ -31,8 +31,10 @@
         <button class="btn btn-light" type="submit">Tìm</button>
       </form>
       <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="#">Giỏ hàng ({{ cart_count }})</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'cart' %}">Giỏ hàng ({{ cart_count }})</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'order_lookup' %}">Tra cứu đơn</a></li>
         {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'my_orders' %}">Đơn hàng của tôi</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'account' %}">{{ user.first_name|default:user.username }}</a></li>
           <li class="nav-item">
             <form action="{% url 'logout' %}" method="post">{% csrf_token %}

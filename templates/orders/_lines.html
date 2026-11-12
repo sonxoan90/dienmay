@@ -1,0 +1,6 @@
+{% load shop_extras %}
+<table class="table table-sm">
+  <thead><tr><th>Sản phẩm</th><th class="text-end">SL</th><th class="text-end">Thành tiền</th></tr></thead>
+  <tbody>{% for l in lines %}<tr><td>{{ l.product.name }}</td><td class="text-end">{{ l.quantity }}</td><td class="text-end">{{ l.subtotal|vnd }}</td></tr>{% endfor %}</tbody>
+  <tfoot><tr><th colspan="2">Tổng cộng</th><th class="text-end text-danger">{{ total|vnd }}</th></tr></tfoot>
+</table>

@@ -10,6 +10,6 @@
     {% include 'registration/_form_fields.html' with form=profile_form %}
     <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
   </form>
-  <p class="mt-3 small text-muted">Danh sách đơn hàng sẽ hiển thị ở đây từ tuần 4.</p>
+  <p class="mt-3 small text-muted"><a href="{% url 'my_orders' %}">Xem đơn hàng của tôi →</a></p>
 </div></div>
 {% endblock %}

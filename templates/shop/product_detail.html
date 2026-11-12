@@ -16,10 +16,11 @@
     {% if product.sale_price %}<p class="text-muted"><del>{{ product.price|vnd }}</del></p>{% endif %}
     <p>{% if product.stock > 0 %}<span class="badge bg-success">Còn {{ product.stock }} sản phẩm</span>
        {% else %}<span class="badge bg-secondary">Hết hàng</span>{% endif %}</p>
-    <div class="d-flex gap-2 mb-4">
-      <button class="btn btn-outline-primary" {% if product.stock == 0 %}disabled{% endif %}>Thêm vào giỏ</button>
-      <button class="btn btn-danger" {% if product.stock == 0 %}disabled{% endif %}>Mua ngay</button>
-    </div>
+    <form method="post" class="d-flex flex-wrap gap-2 mb-4 align-items-center">{% csrf_token %}
+      <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" style="width:90px" {% if product.stock == 0 %}disabled{% endif %}>
+      <button class="btn btn-outline-primary" formaction="{% url 'cart_add' product.pk %}" {% if product.stock == 0 %}disabled{% endif %}>Thêm vào giỏ</button>
+      <button class="btn btn-danger" formaction="{% url 'buy_now' product.pk %}" {% if product.stock == 0 %}disabled{% endif %}>Mua ngay</button>
+    </form>
     <h5>Thông số</h5>
     <div class="border rounded p-3" style="white-space: pre-line">{{ product.specs|default:"Đang cập nhật." }}</div>
   </div>

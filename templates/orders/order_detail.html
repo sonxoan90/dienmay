@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}Đơn {{ order.code }}{% endblock %}
+{% block content %}
+<h3>Đơn hàng {{ order.code }}</h3>
+<p>
+  <span class="badge bg-primary">{{ order.get_status_display }}</span>
+  <span class="badge bg-secondary">{{ order.get_payment_status_display }}</span>
+  <span class="text-muted ms-2">{{ order.get_payment_method_display }} · {{ order.created_at|date:"d/m/Y H:i" }}</span>
+</p>
+<p>Người nhận: <b>{{ order.full_name }}</b> · {{ order.phone }}<br>Địa chỉ: {{ order.address }}</p>
+<table class="table table-sm">
+  <thead><tr><th>Sản phẩm</th><th class="text-end">Đơn giá</th><th class="text-end">SL</th><th class="text-end">Thành tiền</th></tr></thead>
+  <tbody>{% for i in items %}<tr><td>{{ i.product_name }}</td><td class="text-end">{{ i.unit_price|vnd }}</td><td class="text-end">{{ i.quantity }}</td><td class="text-end">{% widthratio i.unit_price 1 i.quantity as sub %}{{ sub|vnd }}</td></tr>{% endfor %}</tbody>
+  <tfoot><tr><th colspan="3">Tổng cộng</th><th class="text-end text-danger">{{ order.total_amount|vnd }}</th></tr></tfoot>
+</table>
+<h5 class="mt-4">Tiến trình đơn</h5>
+<ul class="list-group mb-3">{% for h in history %}
+  <li class="list-group-item">{{ h.changed_at|date:"d/m/Y H:i" }} — chuyển sang <b>{{ h.to_status }}</b>{% if h.note %} ({{ h.note }}){% endif %}</li>
+{% endfor %}</ul>
+{% if order.status == 'PENDING' %}
+<form method="post" action="{% url 'order_cancel' order.code %}" onsubmit="return confirm('Hủy đơn hàng này?')">{% csrf_token %}
+  <button class="btn btn-outline-danger">Hủy đơn</button></form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}Đơn hàng của tôi{% endblock %}
+{% block content %}
+<h3 class="mb-3">Đơn hàng của tôi</h3>
+{% if orders %}
+<div class="table-responsive"><table class="table align-middle">
+  <thead><tr><th>Mã đơn</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Trạng thái</th><th>Thanh toán</th></tr></thead>
+  <tbody>{% for o in orders %}
+    <tr><td><a href="{% url 'order_detail' o.code %}">{{ o.code }}</a></td><td>{{ o.created_at|date:"d/m/Y H:i" }}</td>
+    <td>{{ o.total_amount|vnd }}</td><td>{{ o.get_status_display }}</td><td>{{ o.get_payment_status_display }}</td></tr>
+  {% endfor %}</tbody></table></div>
+{% else %}<p>Bạn chưa có đơn hàng nào.</p>{% endif %}
+{% endblock %}

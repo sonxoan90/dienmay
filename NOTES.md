@@ -32,6 +32,11 @@
 - Hiểu được: mọi bộ lọc là tham số trên URL; form đăng xuất phải là POST
 - Còn chưa rõ: ...
 
+### Tuần 4 – Giỏ hàng, mua ngay, COD, tra cứu đơn
+- Đã làm: giỏ hàng (session cho khách vãng lai, bảng Cart/CartItem cho khách đăng nhập, gộp giỏ khi đăng nhập), mua ngay, thanh toán COD, trang thành công, "Đơn hàng của tôi", tra cứu đơn (mã + SĐT), khách tự hủy đơn Chờ xác nhận
+- Hiểu được: giá và tổng tiền luôn tính lại ở server từ DB; tạo đơn + trừ kho nằm trong một `transaction.atomic`
+- Còn chưa rõ: ...
+
 ## Vai trò các bảng
 | App | Bảng | Vai trò | Quan hệ chính |
 | --- | --- | --- | --- |
@@ -93,3 +98,20 @@ Bảng: shop_product, shop_brand. Hạn chế: gõ không dấu ("tu lanh") khô
 ## Chạy test
 User Postgres không có quyền tạo DB test, nên chạy test với settings SQLite tạm (`DATABASES` = sqlite `:memory:`): `python manage.py test --settings=<module>`.
 Các test: `orders/tests.py` (đổi trạng thái, hoàn tồn kho), `shop/tests.py` (trang khách, lọc, đăng ký, đăng nhập).
+
+## Tuần 4: giỏ hàng
+- File: `orders/cart.py` (hàm dùng chung cho 2 loại giỏ), `orders/signals.py` (gộp giỏ khi `user_logged_in`), `shop/context_processors.py` (số món trên menu).
+- Chưa đăng nhập: `request.session['cart'] = {product_id: số lượng}`. Đã đăng nhập: bảng `orders_cart`, `orders_cartitem`. Số lượng luôn bị chặn ở mức tồn kho.
+
+## Tuần 4: đặt hàng COD
+`product_detail` (form POST) → `cart_add` hoặc `buy_now` → `/thanh-toan/` (`checkout`) → `services.create_order`: khóa dòng sản phẩm (`select_for_update`), kiểm tra tồn kho, tính tổng từ giá DB, tạo Order + OrderItem, trừ kho bằng `F()`, ghi lịch sử → xóa giỏ → `/dat-hang-thanh-cong/<mã>/`.
+Mua ngay lưu `session['buy_now']` riêng nên giỏ hiện có không đổi. Mã đơn dạng `DM20261026001` (`_new_code`).
+Bảng: orders_order, orders_orderitem, orders_orderstatushistory, shop_product (stock).
+
+## Tuần 4: theo dõi đơn
+Khách đăng nhập: `/don-hang-cua-toi/` (lọc theo `order.user`). Khách vãng lai: `/tra-cuu-don/` nhập mã + SĐT đúng thì mã đơn được ghi vào `session['order_access']`, các trang xem/hủy đơn kiểm tra danh sách này. Hủy đơn gọi lại `change_status` (hoàn kho + ghi lịch sử).
+
+## Câu hỏi bảo vệ tuần 4
+- Vì sao không lấy tổng tiền từ trình duyệt? (người dùng có thể sửa giá; server lấy giá từ DB)
+- 2 người cùng mua món cuối? (`select_for_update` xếp hàng; người sau thấy hết hàng, đơn không được tạo)
+- Thêm giỏ khác Mua ngay? (Mua ngay dùng khóa session riêng, không đổi giỏ)

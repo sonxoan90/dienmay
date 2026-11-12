@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Thanh toán{% endblock %}
+{% block content %}
+<h3 class="mb-3">Thanh toán</h3>
+<div class="row g-4">
+  <div class="col-md-7">
+    <form method="post" class="card card-body">{% csrf_token %}
+      <input type="hidden" name="source" value="{{ source }}">
+      {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label">{{ field.label }}</label>
+          {% if field.name == 'payment_method' %}
+            {% for radio in field %}<div class="form-check">{{ radio.tag }} <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label></div>{% endfor %}
+            <div class="form-text">VNPay sẽ có ở bản cập nhật sau.</div>
+          {% else %}{{ field }}{% endif %}
+          {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <button class="btn btn-danger" type="submit">Đặt hàng</button>
+    </form>
+  </div>
+  <div class="col-md-5">
+    <div class="card card-body"><h5>Đơn hàng của bạn</h5>{% include 'orders/_lines.html' %}</div>
+  </div>
+</div>
+{% endblock %}
